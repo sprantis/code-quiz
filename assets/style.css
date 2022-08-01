@@ -9,8 +9,11 @@
     height: 15rem;
     width: 49rem;
 }
+ body {
+    background-color: cadetblue;
+ }
 
-.card-body {
+.card-body, .card {
     background-color: aquamarine;
     border-style: double;
     border-width: 5px;
@@ -47,6 +50,8 @@
 }
 
 #resetScore {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-weight: 100;
     background-color: rgb(229, 85, 66);
     color: white;
     border-radius: 10px;
