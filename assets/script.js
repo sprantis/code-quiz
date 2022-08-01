@@ -1,18 +1,7 @@
-// GIVEN I am taking a code quiz
-// WHEN I click the start button
-// THEN a timer starts and I am presented with a question
-// WHEN I answer a question
-// THEN I am presented with another question
-// WHEN I answer a question incorrectly
-// THEN time is subtracted from the clock
-// WHEN all questions are answered or the timer reaches 0
-// THEN the game is over
-// WHEN the game is over
-// THEN I can save my initials and score
-
+// define variables
 let main = document.querySelector("#main");
-let start = document.querySelector("#start");
 let intro = document.querySelector("#intro");
+let start = document.querySelector("#start");
 let time = document.querySelector("#time");
 let timeRemaining = 61;
 let timerInterval = null;
@@ -26,6 +15,11 @@ let field = document.createElement("input");
 let button = document.createElement("input");
 let resetScoreButton = document.createElement("input");
 let getStorage = localStorage.getItem("savedScores") || "[]";
+let result = document.createElement('div');
+let postedScoreContainer = document.createElement('div');
+let questionDiv = document.querySelector("#question");
+let possibleAnswersDiv = document.querySelector("#possibleAnswers");
+let correctAnswerDiv = document.querySelector("#correctAnswer");
 
 let questions = [
     "What symbols represent an array in code?", 
@@ -82,10 +76,9 @@ function startTime() {
 };
 
 function displayCard() {
-    document.querySelector("#question").textContent= "";
-    document.querySelector("#possibleAnswers").textContent= "";
-    document.querySelector("#correctAnswer").textContent= "";
-    
+    questionDiv.textContent = "";
+    possibleAnswersDiv.textContent = "";
+    correctAnswerDiv.textContent = "";    
     //Prompt question
     document.querySelector("#question").textContent = questions[index];
     
@@ -102,18 +95,14 @@ function displayCard() {
 function checkResults() {
   // Using alerts to check for correct answer: https://getbootstrap.com/docs/4.0/components/alerts/
     if (this.textContent == correctAnswers[index]) {
-        let success = document.createElement('div');
-        success.textContent = "Correct!";
-        success.setAttribute('class', 'alert alert-success');
-        success.setAttribute('role', 'alert');
-        document.body.appendChild(success);
+        result.textContent = "Correct!";
+        result.setAttribute('class', 'alert alert-success');
+        result.setAttribute('role', 'alert');
         totalScore++;
     } else {
-        let failure = document.createElement('div');
-        failure.textContent = "Incorrect!";
-        failure.setAttribute('class', 'alert alert-danger');
-        failure.setAttribute('role', 'alert');
-        document.body.appendChild(failure);
+        result.textContent = "Incorrect!";
+        result.setAttribute('class', 'alert alert-danger');
+        result.setAttribute('role', 'alert');
         loseTime();
     };
 
@@ -150,21 +139,41 @@ function setStorage(array) {
 };
 
 function submitScore() {
-    let currentScore = document.getElementById("field").value + ": " + totalScore;
+    // let currentScore = document.getElementById("field").value + ": " + totalScore;
+    let currentScore = {
+        name: document.getElementById("field").value + " : ",
+        points: totalScore
+    }
 
     const newScore = {
-        score: currentScore
+        score: currentScore.name + currentScore.points
     };
 
     scoresArray = JSON.parse(getStorage);
     scoresArray.push(newScore);
   
     time.textContent = "SCORES";
-    section.textContent = currentScore;
+    section.textContent = currentScore.name + currentScore.points;
     
-    // Need to work on this
+
+
+    //resetScoreButton clears localStorage, but score still remains on page until reload.
+    resetScoreButton.setAttribute("id", "resetScore");
+    resetScoreButton.setAttribute("type", "submit");
+    resetScoreButton.setAttribute("value", "Reset Score")
+    resetScoreButton.setAttribute("class", "d-flex justify-content-center");
+    main.appendChild(resetScoreButton);
+
+    // source for removing quotation marks from beginning and end of string
+    main.append(postedScoreContainer);
+
     for (let i = 0; i < scoresArray.length; i++){
-        main.append(JSON.stringify(scoresArray[i].score.split('"')));
+        // main.append(JSON.stringify(scoresArray[i].score.split('"')));
+        let postedScore = document.createElement('div');
+        postedScore.textContent = String(JSON.stringify(scoresArray[i].score).replace(/['"]+/g, ''));
+        postedScore.setAttribute("class", "posted-score");
+        postedScoreContainer.append(postedScore)
+        console.log(postedScore)
     };
 
     setStorage(scoresArray);
@@ -174,12 +183,7 @@ function submitScore() {
     button.setAttribute("id", "startOver");
     button.setAttribute("value", "Start Over");
     
-    //resetScoreButton clears localStorage, but score still remains on page until reload.
-    resetScoreButton.setAttribute("id", "resetScore");
-    resetScoreButton.setAttribute("type", "submit");
-    resetScoreButton.setAttribute("value", "Reset Score")
-    resetScoreButton.setAttribute("class", "d-flex justify-content-center");
-    main.appendChild(resetScoreButton);
+
     
     document.getElementById("startOver").addEventListener("click", startOver);
     document.getElementById("resetScore").addEventListener("click", resetScore);
@@ -187,6 +191,8 @@ function submitScore() {
 
 function gameOver() {
     clearInterval(timerInterval);
+    questionDiv.remove();
+    possibleAnswersDiv.remove();
   
     time.textContent = "GAME OVER";
     time.setAttribute("class", "col-md-12 d-flex justify-content-center");
@@ -222,8 +228,11 @@ function startOver() {
 
 function resetScore() {
     localStorage.clear();
+    postedScoreContainer.remove();
 };
 
+result.setAttribute("id", "result");
+document.body.prepend(result);
 intro.textContent = "Press Start Quiz to begin.";
 start.addEventListener("click", displayCard);
 start.addEventListener("click", hideIntro);
