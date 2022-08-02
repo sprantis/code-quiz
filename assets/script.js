@@ -80,10 +80,12 @@ function displayCard() {
     possibleAnswersDiv.textContent = "";
     correctAnswerDiv.textContent = "";    
     //Prompt question
-    document.querySelector("#question").textContent = questions[index];
+    if (document.querySelector("#question") !== null){
+        document.querySelector("#question").textContent = questions[index];
+    }
     
     //Generate buttons for all possibleAnswers per question
-    for (let i = 0; i < possibleAnswers[index].length; i++) {
+    for (let i = 0; i < 3; i++) {
         let answerButton = document.createElement("button");
         answerButton.setAttribute("class", "button-choice");
         answerButton.textContent = possibleAnswers[index][i];
