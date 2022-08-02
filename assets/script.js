@@ -65,7 +65,7 @@ let correctAnswers = [
     'Application Programming Interface'
 ];
 
-
+// trigger when quiz starts
 function hideIntro() {
     intro.remove();
     start.remove();
@@ -92,6 +92,7 @@ function displayCard() {
     };
 };
 
+// verified answer is correct or incorrect
 function checkResults() {
   // Using alerts to check for correct answer: https://getbootstrap.com/docs/4.0/components/alerts/
     if (this.textContent == correctAnswers[index]) {
@@ -116,6 +117,7 @@ function checkResults() {
     displayCard();
 };
 
+// timer countdown that stops game when it reaches zero
 function countdown() {
     timeRemaining--;
     time.textContent = timeRemaining + "s";
@@ -124,7 +126,7 @@ function countdown() {
         gameOver();
     };
 };
-
+// player loses 10 seconds for every incorrect answer
 function loseTime() {
     timeRemaining -= 10;
     time.textContent = timeRemaining + "s";
@@ -134,12 +136,13 @@ function loseTime() {
     };
 };
 
+// set array of answers into local storage
 function setStorage(array) {
     localStorage.setItem("savedScores", JSON.stringify(array));
 };
 
+// ability to submit score by player
 function submitScore() {
-    // let currentScore = document.getElementById("field").value + ": " + totalScore;
     let currentScore = {
         name: document.getElementById("field").value + " : ",
         points: totalScore
@@ -148,32 +151,28 @@ function submitScore() {
     const newScore = {
         score: currentScore.name + currentScore.points
     };
-
+    // parse local storage values to string
     scoresArray = JSON.parse(getStorage);
     scoresArray.push(newScore);
   
     time.textContent = "SCORES";
     section.textContent = currentScore.name + currentScore.points;
     
-
-
-    //resetScoreButton clears localStorage, but score still remains on page until reload.
     resetScoreButton.setAttribute("id", "resetScore");
     resetScoreButton.setAttribute("type", "submit");
     resetScoreButton.setAttribute("value", "Reset Score")
     resetScoreButton.setAttribute("class", "d-flex justify-content-center");
     main.appendChild(resetScoreButton);
 
-    // source for removing quotation marks from beginning and end of string
+    
     main.append(postedScoreContainer);
 
     for (let i = 0; i < scoresArray.length; i++){
-        // main.append(JSON.stringify(scoresArray[i].score.split('"')));
         let postedScore = document.createElement('div');
+        // source for removing quotation marks from beginning and end of string: https://stackoverflow.com/questions/19156148/i-want-to-remove-double-quotes-from-a-string
         postedScore.textContent = String(JSON.stringify(scoresArray[i].score).replace(/['"]+/g, ''));
         postedScore.setAttribute("class", "posted-score");
         postedScoreContainer.append(postedScore)
-        console.log(postedScore)
     };
 
     setStorage(scoresArray);
@@ -183,12 +182,11 @@ function submitScore() {
     button.setAttribute("id", "startOver");
     button.setAttribute("value", "Start Over");
     
-
-    
     document.getElementById("startOver").addEventListener("click", startOver);
     document.getElementById("resetScore").addEventListener("click", resetScore);
 };
 
+// function to stop game and display results
 function gameOver() {
     clearInterval(timerInterval);
     questionDiv.remove();
@@ -221,7 +219,6 @@ function gameOver() {
     document.getElementById("submitButton").addEventListener("click", submitScore);
 };
 
-// Reload page to start over
 function startOver() {
     location.reload();
 };
