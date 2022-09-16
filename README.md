@@ -1,5 +1,4 @@
-# code-quiz
-## Code-Quiz
+# Code Quiz
 
 Deployed Link:
 [https://sprantis.github.io/code-quiz/]
